@@ -109,7 +109,7 @@ function my_taxonomies_name() {
 		'capabilities'      => array(),
 	);
 
-	register_taxonomy( 'taxonomy-slug', array( 'imovel' ), $args );
+	register_taxonomy( 'taxonomy-slug', array('imovel'), $args);
 }
-add_action( 'init', 'registrarMenuNavegacao' );
-add_action( 'init', 'my_taxonomies_name' );
+add_action( 'init', 'registrarMenuNavegacao');
+add_action( 'init', 'my_taxonomies_name');
