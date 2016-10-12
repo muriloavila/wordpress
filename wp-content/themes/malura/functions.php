@@ -80,7 +80,7 @@ function registrarMenuNavegacao(){
 function my_taxonomies_name() {
 
 	$labels = array(
-		'name'					=> _x( 'Localizações', 'Localizações', 'text-domain' ),
+		'name'					=> _x( 'localizacao', 'localizacao', 'text-domain' ),
 		'singular_name'			=> _x( 'Localização', 'Localização', 'text-domain' ),
 		'search_items'			=> __( 'Localização', 'text-domain' ),
 		'popular_items'			=> __( 'Localizações', 'text-domain' ),
@@ -109,7 +109,69 @@ function my_taxonomies_name() {
 		'capabilities'      => array(),
 	);
 
-	register_taxonomy( 'taxonomy-slug', array('imovel'), $args);
+	register_taxonomy( 'localizacao', 'imovel', $args);
 }
+
+function preenche_conteudo_informacoes_imoveis($post){
+	$imoveis_meta_data = get_post_meta($post->ID);
+?>
+	<div>
+		<div>
+			<label for='maluras-preco-input'>Preço:</label>
+			<div>
+				<span>R$</span>
+				<input id="maluras-preco-input" type="text" name="preco_id"
+						value="<?= number_format($imoveis_meta_data['preco_id'][0], 2, ',', '.')?>">
+			</div>
+		</div>
+
+		<div>
+			<label for="maluras-vagas-input">Vagas:</label>
+			<input id="maluras-vagas-input" type="number" name="vagas_id"
+						value="<?= $imoveis_meta_data['vagas_id'][0] ?>">
+		</div>
+
+		<div>
+			<label for="maluras-banheiros-input">Banheiros:</label>
+			<input id="maluras-banheiros-input" type="number" name="banheiros_id"
+						value="<?= $imoveis_meta_data['banheiros_id'][0] ?>">
+		</div>
+
+		<div>
+			<label for="maluras-quartos-input">Quartos:</label>
+			<input id="maluras-quartos-input" type="number" name="quartos_id"
+						value="<?= $imoveis_meta_data['quartos_id'][0] ?>">
+		</div>
+
+		
+	</div>
+
+
+
+<?php
+}
+
+function registra_meta_boxes(){
+	add_meta_box( 'informacoes-imoveis', 'Informações Ímovel', 'preenche_conteudo_informacoes_imoveis', 
+					'imovel', 'normal','high');
+}
+
+function atualiza_meta_tags($post_id){
+	if(isset($_POST['preco_id'])){
+		update_post_meta($post_id, 'preco_id', sanitize_text_field($_POST['preco_id']));
+	}
+
+	if(isset($_POST['vagas_id']))
+		update_post_meta($post_id, 'vagas_id', sanitize_text_field($_POST['vagas_id']));
+	
+	if(isset($_POST['banheiros_id']))
+		update_post_meta($post_id, 'banheiros_id', sanitize_text_field($_POST['banheiros_id']));
+	
+	if(isset($_POST['quartos_id']))
+		update_post_meta($post_id, 'quartos_id', sanitize_text_field($_POST['quartos_id']));
+}
+
+add_action('add_meta_boxes', 'registra_meta_boxes');
 add_action( 'init', 'registrarMenuNavegacao');
 add_action( 'init', 'my_taxonomies_name');
+add_action('save_post', 'atualiza_meta_tags');

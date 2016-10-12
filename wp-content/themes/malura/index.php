@@ -1,6 +1,11 @@
 
 
 <?php 
+	$queryTaxonomy = array_key_exists('taxonomy', $_GET);
+
+	if($queryTaxonomy && $_GET['taxonomy'] === ''){
+		wp_redirect(home_url());
+	}
 //COMO MANDAR CSS ESPECIFICO:
 /*
 	CRIE UMA VARIAVEL CHAMADA $CSS QUE RECEBE O NOME DO ARQUIVO CSS DA PAGINA
@@ -10,10 +15,32 @@
 get_header(); ?>
 <main class="home-main">
 	<div class="container">
+	<?php $taxonomias = get_terms('localizacao'); ?>
+		<form>
+			<select name='taxonomy'>
+				<option value=''>Todos os Locais</option>
+				<?php foreach ($taxonomias as $taxonomia) { ?>
+					<option value='<?=$taxonomia->slug?>'><?= $taxonomia->name ?></option>
+				<?php } ?>
+			</select>
+			<button type="submit">Buscar</button>
+		</form>
 
 
 		<?php 
-			$args = array('post_type' => 'imovel');
+			if($queryTaxonomy){
+				$taxQuery = array(
+									array(
+											'taxonomy' => 'localizacao',
+											'field' => 'slug',
+											'terms' => $_GET['taxonomy']
+										)
+								);
+			}
+			$args = array(
+					'post_type' => 'imovel',
+					'tax_query' => $taxQuery
+				);
 			
 			$query = new WP_Query( $args );
 			
